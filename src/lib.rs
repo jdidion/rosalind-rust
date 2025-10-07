@@ -1,6 +1,7 @@
 pub mod dna;
 pub mod prob;
 pub mod rna;
+pub mod search;
 
 use std::fmt::Debug;
 use std::fmt::{Display, Formatter};
@@ -42,7 +43,8 @@ impl Input {
 pub enum Answer {
     String(String),
     Int(usize),
-    Vec(Vec<String>),
+    StringVec(Vec<String>),
+    IntVec(Vec<usize>),
     CountAndIter {
         count: usize,
         iter: Box<dyn Iterator<Item = String>>,
@@ -54,7 +56,14 @@ impl Answer {
         match self {
             Answer::String(s) => println!("{}", s),
             Answer::Int(i) => println!("{}", i),
-            Answer::Vec(v) => println!("{}", v.join(" ")),
+            Answer::StringVec(v) => println!("{}", v.join(" ")),
+            Answer::IntVec(v) => println!(
+                "{}",
+                v.iter()
+                    .map(|i| i.to_string())
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            ),
             Answer::CountAndIter { count, iter } => {
                 println!("{}", count);
                 for s in iter {

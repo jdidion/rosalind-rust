@@ -19,5 +19,5 @@ pub fn run(input: Input) -> Answer {
         .map(|count| count.to_string())
         .collect::<Vec<_>>();
 
-    Answer::Vec(counts)
+    Answer::StringVec(counts)
 }
