@@ -11,15 +11,34 @@ fn parse_line(s: &str) -> (usize, usize) {
     (a.parse().unwrap(), b.parse().unwrap())
 }
 
-fn breadth_first_search(graph: HashMap<usize, Vec<usize>>, start: usize) -> Vec<usize> {
-    let queue = VecDeque::new();
-    let order = HashSet::new();
-    let distance = HashMap::with_capacity(graph.len());
+fn breadth_first_search(
+    graph: &HashMap<usize, Vec<usize>>,
+    num_nodes: usize,
+    start: usize,
+) -> Vec<i64> {
+    let mut queue = VecDeque::new();
+    let mut visited = HashSet::new();
+    let mut distance: HashMap<usize, i64> = HashMap::with_capacity(graph.len());
 
     queue.push_back(start);
-    order.insert(start);
+    visited.insert(start);
+    distance.insert(start, 0);
 
-    
+    while let Some(node) = queue.pop_front() {
+        let d = distance[&node];
+        if let Some(neighbors) = graph.get(&node) {
+            for &n in neighbors {
+                if visited.insert(n) {
+                    distance.insert(n, d + 1);
+                    queue.push_back(n);
+                }
+            }
+        }
+    }
+
+    (1..=num_nodes)
+        .map(|i| distance.get(&i).copied().unwrap_or(-1))
+        .collect()
 }
 
 pub fn run(input: Input) -> Answer {
@@ -27,13 +46,10 @@ pub fn run(input: Input) -> Answer {
     let (num_nodes, _num_edges) = parse_line(lines.next().unwrap());
     // map of vertex index to neighbors pairs
     let mut graph: HashMap<usize, Vec<usize>> = HashMap::with_capacity(num_nodes);
-    lines
-        .into_iter()
-        .map(|line| parse_line(line))
-        .for_each(|(a, b)| {
-            graph.entry(a).and_modify(|v| v.push(b)).or_insert(vec![b]);
-        });
+    lines.map(parse_line).for_each(|(a, b)| {
+        graph.entry(a).and_modify(|v| v.push(b)).or_insert(vec![b]);
+    });
 
-    let distance = breadth_first_search(graph, 1);
-    return Answer::IntVec(distance);
+    let distance = breadth_first_search(&graph, num_nodes, 1);
+    Answer::IntVec(distance)
 }
