@@ -44,7 +44,7 @@ pub enum Answer {
     String(String),
     Int(usize),
     StringVec(Vec<String>),
-    IntVec(Vec<usize>),
+    IntVec(Vec<i64>),
     CountAndIter {
         count: usize,
         iter: Box<dyn Iterator<Item = String>>,
